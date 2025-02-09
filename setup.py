@@ -13,6 +13,10 @@ setup(
     package_dir={'': 'src'},
     install_requires=[
         # List your project dependencies here
+        'pandas>=1.3.0',
+        'numpy>=1.21.0',
+        'pytest>=6.2.0',
+        'commitizen>=2.17.6',
     ],
     classifiers=[
         'Programming Language :: Python :: 3',
