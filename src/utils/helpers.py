@@ -1,24 +1,24 @@
-# filepath: bank-reconciliation-app/src/utils/helpers.py
+import os
 import pandas as pd
 from openpyxl import load_workbook
 from openpyxl.styles import Font, PatternFill
 
 def create_spreadsheet(file_path):
     """
-    Create a new spreadsheet with headers for transactions.
+    Create a new spreadsheet with headers for transactions if it does not already exist.
 
     Args:
         file_path (str): Path to the file to create.
     """
-    # Define the headers for the spreadsheet
-    headers = ['Date', 'Description', 'Transaction', 'Debit', 'Credit', 'Balance']
+    if not os.path.exists(file_path):
+        # Define the headers for the spreadsheet
+        headers = ['Date', 'Description', 'Transaction', 'Debit', 'Credit', 'Balance']
 
-    # Create an empty DataFrame with the headers
-    df = pd.DataFrame(columns=headers)
+        # Create an empty DataFrame with the headers
+        df = pd.DataFrame(columns=headers)
 
-    # Save the DataFrame to an Excel file
-    df.to_excel(file_path, index=False)
-
+        # Save the DataFrame to an Excel file
+        df.to_excel(file_path, index=False)
 def add_transaction(file_path, date, description, transaction, debit, credit):
     """
     Add a transaction to the spreadsheet.
@@ -32,7 +32,11 @@ def add_transaction(file_path, date, description, transaction, debit, credit):
         credit (float): Credit amount of the transaction.
     """
     # Load the existing spreadsheet into a DataFrame
-    df = pd.read_excel(file_path)
+    try:
+        df = pd.read_excel(file_path)
+    except FileNotFoundError:
+        # If the file does not exist, create a new DataFrame with headers
+        df = pd.DataFrame(columns=['Date', 'Description', 'Transaction', 'Debit', 'Credit', 'Balance'])
 
     # Calculate the new balance
     if len(df) == 0:
@@ -51,10 +55,7 @@ def add_transaction(file_path, date, description, transaction, debit, credit):
     }])
 
     # Append the new transaction to the DataFrame
-    if df.empty:
-        df = new_txn
-    else:
-        df = pd.concat([df, new_txn], ignore_index=True)
+    df = pd.concat([df, new_txn], ignore_index=True)
 
     # Save the updated DataFrame back to the Excel file
     df.to_excel(file_path, index=False)
