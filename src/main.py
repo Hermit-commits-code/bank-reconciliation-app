@@ -2,7 +2,8 @@
 import os
 import tkinter as tk
 from tkinter import messagebox
-from utils.helpers import create_spreadsheet, add_transaction,carry_balance_to_next_month
+from utils.helpers import create_spreadsheet, add_transaction,carry_balance_to_next_month, generate_monthly_report, export_transactions_to_csv
+
 
 def add_transaction_ui():
     """
@@ -24,6 +25,22 @@ def carry_balance_ui():
     """
     carry_balance_to_next_month(spreadsheet_path)
     messagebox.showinfo("Success", "Balance carried to the next month successfully!")
+
+def generate_report_ui():
+    """
+    Function to generate a monthly report through the UI.
+    """
+    month = int(month_entry.get())
+    year = int(year_entry.get())
+    generate_monthly_report(spreadsheet_path, month, year)
+    messagebox.showinfo("Success", f"Monthly report for {month}/{year} generated successfully!")
+
+def export_transactions_ui():
+    """
+    Function to export all transactions to a CSV file through the UI.
+    """
+    export_transactions_to_csv(spreadsheet_path)
+    messagebox.showinfo("Success", "Transactions exported to CSV successfully!")
 
 def main():
     """
@@ -77,6 +94,22 @@ def main():
     tk.Button(root, text="Add Transaction", command=add_transaction_ui).grid(row=6, column=0, columnspan=2)
     
     tk.Button(root, text="Carry Balance to Next Month", command=carry_balance_ui).grid(row=7, column=0, columnspan=2)
+
+    # Create UI elements for generating monthly reports
+    tk.Label(root, text="Month").grid(row=8, column=0)
+    global month_entry
+    month_entry = tk.Entry(root)
+    month_entry.grid(row=8, column=1)
+
+    tk.Label(root, text="Year").grid(row=9, column=0)
+    global year_entry
+    year_entry = tk.Entry(root)
+    year_entry.grid(row=9, column=1)
+
+    tk.Button(root, text="Generate Monthly Report", command=generate_report_ui).grid(row=10, column=0, columnspan=2)
+
+    tk.Button(root, text="Export Transactions to CSV", command=export_transactions_ui).grid(row=11, column=0, columnspan=2)
+
 
     # Start the Tkinter event loop
     root.mainloop()

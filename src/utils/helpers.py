@@ -163,3 +163,17 @@ def generate_monthly_report(file_path, month, year):
     c.drawString(100, 710, f"Total Credit: {total_credit}")
     c.drawString(100, 690, f"Ending Balance: {ending_balance}")
     c.save()
+
+def export_transactions_to_csv(file_path):
+    """
+    Export all transactions to a CSV file.
+
+    Args:
+        file_path (str): Path to the spreadsheet file.
+    """
+    # Load the existing spreadsheet into a DataFrame
+    df = pd.read_excel(file_path)
+
+    # Save the DataFrame to a CSV file
+    csv_file_path = file_path.replace('.xlsx', '.csv')
+    df.to_csv(csv_file_path, index=False)
