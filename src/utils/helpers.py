@@ -49,8 +49,11 @@ def add_transaction(file_path, date, description, transaction, txn_type, amount)
         'Balance': balance
     }])
 
-    # Append the new transaction to the DataFrame
-    df = df.append(new_txn, ignore_index=True)
+      # Append the new transaction to the DataFrame
+    if df.empty:
+        df = new_txn
+    else:
+        df = pd.concat([df, new_txn], ignore_index=True)
 
     # Save the updated DataFrame back to the Excel file
     df.to_excel(file_path, index=False)
