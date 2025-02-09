@@ -1,6 +1,7 @@
 # filepath: bank-reconciliation-app/src/utils/helpers.py
-
 import pandas as pd
+from openpyxl import load_workbook
+from openpyxl.styles import Font, PatternFill
 
 def create_spreadsheet(file_path):
     """
@@ -10,7 +11,7 @@ def create_spreadsheet(file_path):
         file_path (str): Path to the file to create.
     """
     # Define the headers for the spreadsheet
-    headers = ['Date', 'Description', 'Transaction', 'Type', 'Amount', 'Balance']
+    headers = ['Date', 'Description', 'Transaction', 'Debit', 'Credit', 'Balance']
 
     # Create an empty DataFrame with the headers
     df = pd.DataFrame(columns=headers)
@@ -18,7 +19,7 @@ def create_spreadsheet(file_path):
     # Save the DataFrame to an Excel file
     df.to_excel(file_path, index=False)
 
-def add_transaction(file_path, date, description, transaction, txn_type, amount):
+def add_transaction(file_path, date, description, transaction, debit, credit):
     """
     Add a transaction to the spreadsheet.
 
@@ -27,29 +28,29 @@ def add_transaction(file_path, date, description, transaction, txn_type, amount)
         date (str): Date of the transaction.
         description (str): Description of the transaction.
         transaction (str): Transaction identifier.
-        txn_type (str): Type of the transaction ('Withdrawal' or 'Deposit').
-        amount (float): Amount of the transaction.
+        debit (float): Debit amount of the transaction.
+        credit (float): Credit amount of the transaction.
     """
     # Load the existing spreadsheet into a DataFrame
     df = pd.read_excel(file_path)
 
     # Calculate the new balance
     if len(df) == 0:
-        balance = amount
+        balance = credit - debit
     else:
-        balance = df.iloc[-1]['Balance'] + amount if txn_type == 'Deposit' else df.iloc[-1]['Balance'] - amount
+        balance = df['Balance'].iloc[-1] + credit - debit
 
     # Create a new transaction as a DataFrame
     new_txn = pd.DataFrame([{
         'Date': date,
         'Description': description,
         'Transaction': transaction,
-        'Type': txn_type,
-        'Amount': amount,
+        'Debit': debit,
+        'Credit': credit,
         'Balance': balance
     }])
 
-      # Append the new transaction to the DataFrame
+    # Append the new transaction to the DataFrame
     if df.empty:
         df = new_txn
     else:
@@ -57,3 +58,25 @@ def add_transaction(file_path, date, description, transaction, txn_type, amount)
 
     # Save the updated DataFrame back to the Excel file
     df.to_excel(file_path, index=False)
+
+    # Apply formatting to the Excel file
+    apply_formatting(file_path)
+
+def apply_formatting(file_path):
+    """
+    Apply formatting to the Excel file.
+
+    Args:
+        file_path (str): Path to the Excel file.
+    """
+    wb = load_workbook(file_path)
+    ws = wb.active
+
+    # Apply red font to debit values
+    red_font = Font(color="FF0000")
+    for row in ws.iter_rows(min_row=2, min_col=4, max_col=4):
+        for cell in row:
+            if cell.value < 0:
+                cell.font = red_font
+
+    wb.save(file_path)
