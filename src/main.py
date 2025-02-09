@@ -2,7 +2,7 @@
 import os
 import tkinter as tk
 from tkinter import messagebox
-from utils.helpers import create_spreadsheet, add_transaction
+from utils.helpers import create_spreadsheet, add_transaction,carry_balance_to_next_month
 
 def add_transaction_ui():
     """
@@ -17,6 +17,13 @@ def add_transaction_ui():
 
     add_transaction(spreadsheet_path, date, description, transaction, debit, credit, reconciled)
     messagebox.showinfo("Success", "Transaction added successfully!")
+
+def carry_balance_ui():
+    """
+    Function to carry the balance to the next month through the UI.
+    """
+    carry_balance_to_next_month(spreadsheet_path)
+    messagebox.showinfo("Success", "Balance carried to the next month successfully!")
 
 def main():
     """
@@ -68,6 +75,8 @@ def main():
     reconciled_check.grid(row=5, column=1)
 
     tk.Button(root, text="Add Transaction", command=add_transaction_ui).grid(row=6, column=0, columnspan=2)
+    
+    tk.Button(root, text="Carry Balance to Next Month", command=carry_balance_ui).grid(row=7, column=0, columnspan=2)
 
     # Start the Tkinter event loop
     root.mainloop()
