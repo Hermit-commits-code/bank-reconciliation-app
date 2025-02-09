@@ -13,8 +13,9 @@ def add_transaction_ui():
     transaction = transaction_entry.get()
     debit = float(debit_entry.get()) if debit_entry.get() else 0.0
     credit = float(credit_entry.get()) if credit_entry.get() else 0.0
+    reconciled = reconciled_var.get()
 
-    add_transaction(spreadsheet_path, date, description, transaction, debit, credit)
+    add_transaction(spreadsheet_path, date, description, transaction, debit, credit, reconciled)
     messagebox.showinfo("Success", "Transaction added successfully!")
 
 def main():
@@ -60,7 +61,13 @@ def main():
     credit_entry = tk.Entry(root)
     credit_entry.grid(row=4, column=1)
 
-    tk.Button(root, text="Add Transaction", command=add_transaction_ui).grid(row=5, column=0, columnspan=2)
+    tk.Label(root, text="Reconciled").grid(row=5, column=0)
+    global reconciled_var
+    reconciled_var = tk.BooleanVar()
+    reconciled_check = tk.Checkbutton(root, variable=reconciled_var)
+    reconciled_check.grid(row=5, column=1)
+
+    tk.Button(root, text="Add Transaction", command=add_transaction_ui).grid(row=6, column=0, columnspan=2)
 
     # Start the Tkinter event loop
     root.mainloop()

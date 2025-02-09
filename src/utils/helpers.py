@@ -19,7 +19,7 @@ def create_spreadsheet(file_path):
 
         # Save the DataFrame to an Excel file
         df.to_excel(file_path, index=False)
-def add_transaction(file_path, date, description, transaction, debit, credit):
+def add_transaction(file_path, date, description, transaction, debit, credit, reconciled=False):
     """
     Add a transaction to the spreadsheet.
 
@@ -30,13 +30,14 @@ def add_transaction(file_path, date, description, transaction, debit, credit):
         transaction (str): Transaction identifier.
         debit (float): Debit amount of the transaction.
         credit (float): Credit amount of the transaction.
+        reconciled (bool): Flag to indicate if the transaction has been reconciled.
     """
     # Load the existing spreadsheet into a DataFrame
     try:
         df = pd.read_excel(file_path)
     except FileNotFoundError:
         # If the file does not exist, create a new DataFrame with headers
-        df = pd.DataFrame(columns=['Date', 'Description', 'Transaction', 'Debit', 'Credit', 'Balance'])
+        df = pd.DataFrame(columns=['Date', 'Description', 'Transaction', 'Debit', 'Credit', 'Balance', 'Reconciled'])
 
     # Calculate the new balance
     if len(df) == 0:
@@ -51,7 +52,9 @@ def add_transaction(file_path, date, description, transaction, debit, credit):
         'Transaction': transaction,
         'Debit': debit,
         'Credit': credit,
-        'Balance': balance
+        'Balance': balance,
+        'Reconciled': reconciled
+
     }])
 
     # Append the new transaction to the DataFrame
