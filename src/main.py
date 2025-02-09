@@ -11,10 +11,10 @@ def add_transaction_ui():
     date = date_entry.get()
     description = description_entry.get()
     transaction = transaction_entry.get()
-    txn_type = type_entry.get()
-    amount = float(amount_entry.get())
+    debit = float(debit_entry.get()) if debit_entry.get() else 0.0
+    credit = float(credit_entry.get()) if credit_entry.get() else 0.0
 
-    add_transaction(spreadsheet_path, date, description, transaction, txn_type, amount)
+    add_transaction(spreadsheet_path, date, description, transaction, debit, credit)
     messagebox.showinfo("Success", "Transaction added successfully!")
 
 def main():
@@ -45,20 +45,20 @@ def main():
     description_entry = tk.Entry(root)
     description_entry.grid(row=1, column=1)
 
-    tk.Label(root, text="Transaction").grid(row=2, column=0)
+    tk.Label(root, text="Payee").grid(row=2, column=0)
     global transaction_entry
     transaction_entry = tk.Entry(root)
     transaction_entry.grid(row=2, column=1)
 
-    tk.Label(root, text="Type (Withdrawal/Deposit)").grid(row=3, column=0)
-    global type_entry
-    type_entry = tk.Entry(root)
-    type_entry.grid(row=3, column=1)
+    tk.Label(root, text="Debit").grid(row=3, column=0)
+    global debit_entry
+    debit_entry = tk.Entry(root)
+    debit_entry.grid(row=3, column=1)
 
-    tk.Label(root, text="Amount").grid(row=4, column=0)
-    global amount_entry
-    amount_entry = tk.Entry(root)
-    amount_entry.grid(row=4, column=1)
+    tk.Label(root, text="Credit").grid(row=4, column=0)
+    global credit_entry
+    credit_entry = tk.Entry(root)
+    credit_entry.grid(row=4, column=1)
 
     tk.Button(root, text="Add Transaction", command=add_transaction_ui).grid(row=5, column=0, columnspan=2)
 
