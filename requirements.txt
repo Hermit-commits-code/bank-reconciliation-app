@@ -1,0 +1,12 @@
+# This file lists the dependencies required for the bank reconciliation application.
+
+# Add any required libraries here, for example:
+# pandas - for data manipulation and analysis
+# numpy - for numerical operations
+# pytest - for testing framework
+# requests - for making HTTP requests if needed
+
+# Example dependencies:
+pandas>=1.3.0
+numpy>=1.21.0
+pytest>=6.2.0
