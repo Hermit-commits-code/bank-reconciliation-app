@@ -134,12 +134,24 @@ def generate_monthly_report(file_path, month, year):
     """
     # Load the existing spreadsheet into a DataFrame
     df = pd.read_excel(file_path)
-
+    
+    # Debugging: Print the DataFrame after loading
+    # print("DataFrame after loading:")
+    # print(df)
+    
     # Specify the date format explicitly
-    df['Date'] = pd.to_datetime(df['Date'], format='%Y-%m-%d', errors='coerce')
+    df['Date'] = pd.to_datetime(df['Date'], errors='coerce', infer_datetime_format=True)
+    
+    # Debugging: Print the DataFrame after parsing dates
+    # print("DataFrame after parsing dates:")
+    # print(df)
 
     # Filter transactions for the given month and year
     monthly_df = df[(df['Date'].dt.month == month) & (df['Date'].dt.year == year)]
+    
+    # Debugging: Print the filtered DataFrame
+    # print("Monthly DataFrame:")
+    # print(monthly_df)
 
     # Summarize transactions
     total_debit = monthly_df['Debit'].sum()
@@ -159,6 +171,37 @@ def generate_monthly_report(file_path, month, year):
     report_file_path = f"data/monthly_report_{year}_{month}.pdf"
     c = canvas.Canvas(report_file_path, pagesize=letter)
     c.drawString(100, 750, f"Monthly Report for {month}/{year}")
+    c.drawString(100, 730, f"Total Debit: {total_debit}")
+    c.drawString(100, 710, f"Total Credit: {total_credit}")
+    c.drawString(100, 690, f"Ending Balance: {ending_balance}")
+    c.save()
+
+def generate_yearly_report(file_path, year):
+    """
+    Generate a yearly report summarizing transactions for a given year.
+
+    Args:
+        file_path (str): Path to the spreadsheet file.
+        year (int): Year for which to generate the report.
+    """
+    # Load the existing spreadsheet into a DataFrame
+    df = pd.read_excel(file_path)
+
+    # Specify the date format explicitly
+    df['Date'] = pd.to_datetime(df['Date'], errors='coerce', infer_datetime_format=True)
+
+    # Filter transactions for the given year
+    yearly_df = df[df['Date'].dt.year == year]
+
+    # Summarize transactions
+    total_debit = yearly_df['Debit'].sum()
+    total_credit = yearly_df['Credit'].sum()
+    ending_balance = yearly_df['Balance'].iloc[-1] if not yearly_df.empty else 0.0
+
+    # Generate a PDF report
+    pdf_file_path = f"data/yearly_report_{year}.pdf"
+    c = canvas.Canvas(pdf_file_path, pagesize=letter)
+    c.drawString(100, 750, f"Yearly Report for {year}")
     c.drawString(100, 730, f"Total Debit: {total_debit}")
     c.drawString(100, 710, f"Total Credit: {total_credit}")
     c.drawString(100, 690, f"Ending Balance: {ending_balance}")
